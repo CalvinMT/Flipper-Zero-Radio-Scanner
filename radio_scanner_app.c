@@ -18,6 +18,10 @@
 #define SUBGHZ_FREQUENCY_STEP 10000
 #define SUBGHZ_DEVICE_NAME    "cc1101_int"
 
+/**
+ * Draw callback for updating the canvas UI.
+ * Displays the current frequency, RSSI, sensitivity, and scanning status.
+ */
 static void radio_scanner_draw_callback(Canvas* canvas, void* context) {
     furi_assert(canvas);
     furi_assert(context);
@@ -49,6 +53,10 @@ static void radio_scanner_draw_callback(Canvas* canvas, void* context) {
 #endif
 }
 
+/**
+ * Input callback for handling button events.
+ * Passes input events into the event queue for processing.
+ */
 static void radio_scanner_input_callback(InputEvent* input_event, void* context) {
     furi_assert(context);
 #ifdef FURI_DEBUG
@@ -60,6 +68,10 @@ static void radio_scanner_input_callback(InputEvent* input_event, void* context)
     FURI_LOG_D(TAG, "Exit radio_scanner_input_callback");
 }
 
+/**
+ * RX callback triggered on radio packet reception.
+ * Currently unused beyond debug logging.
+ */
 static void radio_scanner_rx_callback(const void* data, size_t size, void* context) {
     UNUSED(data);
     UNUSED(context);
@@ -70,6 +82,9 @@ static void radio_scanner_rx_callback(const void* data, size_t size, void* conte
 #endif
 }
 
+/**
+ * Updates the RSSI (signal strength) value from the radio device.
+ */
 static void radio_scanner_update_rssi(RadioScannerApp* app) {
     furi_assert(app);
 #ifdef FURI_DEBUG
@@ -89,6 +104,10 @@ static void radio_scanner_update_rssi(RadioScannerApp* app) {
 #endif
 }
 
+/**
+ * Initializes the SubGHz radio device with appropriate settings.
+ * Sets frequency, loads preset, and begins asynchronous reception.
+ */
 static bool radio_scanner_init_subghz(RadioScannerApp* app) {
     furi_assert(app);
 #ifdef FURI_DEBUG
@@ -148,6 +167,10 @@ static bool radio_scanner_init_subghz(RadioScannerApp* app) {
     return true;
 }
 
+/**
+ * Core logic for scanning radio frequencies.
+ * Adjusts frequency up/down and checks for valid signal above sensitivity threshold.
+ */
 static void radio_scanner_process_scanning(RadioScannerApp* app) {
     furi_assert(app);
 #ifdef FURI_DEBUG
@@ -234,6 +257,10 @@ static void radio_scanner_process_scanning(RadioScannerApp* app) {
 #endif
 }
 
+/**
+ * Allocates and initializes a new instance of the RadioScannerApp.
+ * Sets up GUI components, state variables, and input handlers.
+ */
 RadioScannerApp* radio_scanner_app_alloc() {
 #ifdef FURI_DEBUG
     FURI_LOG_D(TAG, "Enter radio_scanner_app_alloc");
@@ -290,6 +317,10 @@ RadioScannerApp* radio_scanner_app_alloc() {
     return app;
 }
 
+/**
+ * Frees all resources allocated by the RadioScannerApp instance.
+ * Cleans up GUI, radio device, event queue, and memory.
+ */
 void radio_scanner_app_free(RadioScannerApp* app) {
     furi_assert(app);
 #ifdef FURI_DEBUG
@@ -347,6 +378,10 @@ void radio_scanner_app_free(RadioScannerApp* app) {
 #endif
 }
 
+/**
+ * Main entry point for the radio scanner app.
+ * Handles main loop, input processing, scanning logic, and cleanup.
+ */
 int32_t radio_scanner_app(void* p) {
     UNUSED(p);
     FURI_LOG_I(TAG, "Enter radio_scanner_app");
