@@ -20,19 +20,10 @@ RadioScannerApp* radio_scanner_app_alloc() {
         FURI_LOG_E(TAG, "Failed to allocate RadioScannerApp");
         return NULL;
     }
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "RadioScannerApp allocated");
-#endif
 
     app->view_port = view_port_alloc();
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "ViewPort allocated");
-#endif
 
     app->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Event queue allocated");
-#endif
 
     app->running = true;
     app->frequency = RADIO_SCANNER_DEFAULT_FREQ;
@@ -44,26 +35,15 @@ RadioScannerApp* radio_scanner_app_alloc() {
     app->radio_device = NULL;
 
     view_port_draw_callback_set(app->view_port, radio_scanner_draw_callback, app);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Draw callback set");
-#endif
-
     view_port_input_callback_set(app->view_port, radio_scanner_input_callback, app->event_queue);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Input callback set");
-    FURI_LOG_D(TAG, "Exit radio_scanner_app_alloc");
-#endif
 
     app->gui = furi_record_open(RECORD_GUI);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "GUI record opened");
-#endif
 
     gui_add_view_port(app->gui, app->view_port, GuiLayerFullscreen);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "ViewPort added to GUI");
-#endif
 
+#ifdef FURI_DEBUG
+    FURI_LOG_D(TAG, "Exit radio_scanner_app_alloc");
+#endif
     return app;
 }
 
@@ -100,27 +80,12 @@ void radio_scanner_app_free(RadioScannerApp* app) {
     }
 
     subghz_devices_deinit();
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "SubGHz devices de-initialized");
-#endif
     gui_remove_view_port(app->gui, app->view_port);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "ViewPort removed from GUI");
-#endif
     view_port_free(app->view_port);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "ViewPort freed");
-#endif
 
     furi_message_queue_free(app->event_queue);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Event queue freed");
-#endif
 
     furi_record_close(RECORD_GUI);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "GUI record closed");
-#endif
 
     free(app);
 #ifdef FURI_DEBUG
@@ -168,9 +133,6 @@ int32_t radio_scanner_app(void* p) {
             radio_scanner_update_rssi(app);
         }
 
-#ifdef FURI_DEBUG
-        FURI_LOG_D(TAG, "Checking for input events");
-#endif
         if(furi_message_queue_get(app->event_queue, &event, 10) == FuriStatusOk) {
 #ifdef FURI_DEBUG
             FURI_LOG_D(TAG, "Input event received: type=%d, key=%d", event.type, event.key);
