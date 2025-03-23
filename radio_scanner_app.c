@@ -138,24 +138,34 @@ int32_t radio_scanner_app(void* p) {
             FURI_LOG_D(TAG, "Input event received: type=%d, key=%d", event.type, event.key);
 #endif
             if(event.type == InputTypeShort) {
-                if(event.key == InputKeyOk) {
-                    app->scanning = !app->scanning;
-                    FURI_LOG_I(TAG, "Toggled scanning: %d", app->scanning);
-                } else if(event.key == InputKeyUp) {
-                    app->sensitivity += 1.0f;
-                    FURI_LOG_I(TAG, "Increased sensitivity: %f", (double)app->sensitivity);
-                } else if(event.key == InputKeyDown) {
-                    app->sensitivity -= 1.0f;
-                    FURI_LOG_I(TAG, "Decreased sensitivity: %f", (double)app->sensitivity);
-                } else if(event.key == InputKeyLeft) {
-                    app->scan_direction = ScanDirectionDown;
-                    FURI_LOG_I(TAG, "Scan direction set to down");
-                } else if(event.key == InputKeyRight) {
-                    app->scan_direction = ScanDirectionUp;
-                    FURI_LOG_I(TAG, "Scan direction set to up");
-                } else if(event.key == InputKeyBack) {
-                    app->running = false;
-                    FURI_LOG_I(TAG, "Exiting app");
+                switch(event.key) {
+                    case InputKeyOk:
+                        app->scanning = !app->scanning;
+                        FURI_LOG_I(TAG, "Toggled scanning: %d", app->scanning);
+                        break;
+                    case InputKeyUp:
+                        app->sensitivity += 1.0f;
+                        FURI_LOG_I(TAG, "Increased sensitivity: %f", (double)app->sensitivity);
+                        break;
+                    case InputKeyDown:
+                        app->sensitivity -= 1.0f;
+                        FURI_LOG_I(TAG, "Decreased sensitivity: %f", (double)app->sensitivity);
+                        break;
+                    case InputKeyLeft:
+                        app->scan_direction = ScanDirectionDown;
+                        FURI_LOG_I(TAG, "Scan direction set to down");
+                        break;
+                    case InputKeyRight:
+                        app->scan_direction = ScanDirectionUp;
+                        FURI_LOG_I(TAG, "Scan direction set to up");
+                        break;
+                    case InputKeyBack:
+                        app->running = false;
+                        FURI_LOG_I(TAG, "Exiting app");
+                        break;
+                    default:
+                        FURI_LOG_I(TAG, "Unknown input");
+                        break;
                 }
             }
         }
