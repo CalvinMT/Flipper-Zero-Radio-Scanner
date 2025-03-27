@@ -1,56 +1,6 @@
 #include "radio_scanner_app_i.h"
 
 /**
- * Draw callback for updating the canvas UI.
- * Displays the current frequency, RSSI, sensitivity, and scanning status.
- */
-void radio_scanner_draw_callback(Canvas* canvas, void* context) {
-    furi_assert(canvas);
-    furi_assert(context);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Enter radio_scanner_draw_callback");
-#endif
-    RadioScannerApp* app = (RadioScannerApp*)context;
-    canvas_clear(canvas);
-    canvas_set_font(canvas, FontPrimary);
-    canvas_draw_str_aligned(canvas, 64, 2, AlignCenter, AlignTop, "Radio Scanner");
-
-    canvas_set_font(canvas, FontSecondary);
-    char freq_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(freq_str, RADIO_SCANNER_BUFFER_SZ, "Freq: %.2f MHz", (double)app->frequency / 1000000);
-    canvas_draw_str_aligned(canvas, 64, 18, AlignCenter, AlignTop, freq_str);
-
-    char rssi_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(rssi_str, RADIO_SCANNER_BUFFER_SZ, "RSSI: %.2f", (double)app->rssi);
-    canvas_draw_str_aligned(canvas, 64, 30, AlignCenter, AlignTop, rssi_str);
-
-    char sensitivity_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(sensitivity_str, RADIO_SCANNER_BUFFER_SZ, "Sens: %.2f", (double)app->sensitivity);
-    canvas_draw_str_aligned(canvas, 64, 42, AlignCenter, AlignTop, sensitivity_str);
-
-    canvas_draw_str_aligned(
-        canvas, 64, 54, AlignCenter, AlignTop, app->scanning ? "Scanning..." : "Locked");
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Exit radio_scanner_draw_callback");
-#endif
-}
-
-/**
- * Input callback for handling button events.
- * Passes input events into the event queue for processing.
- */
-void radio_scanner_input_callback(InputEvent* input_event, void* context) {
-    furi_assert(context);
-#ifdef FURI_DEBUG
-    FURI_LOG_D(TAG, "Enter radio_scanner_input_callback");
-    FURI_LOG_D(TAG, "Input event: type=%d, key=%d", input_event->type, input_event->key);
-#endif
-    FuriMessageQueue* event_queue = context;
-    furi_message_queue_put(event_queue, input_event, FuriWaitForever);
-    FURI_LOG_D(TAG, "Exit radio_scanner_input_callback");
-}
-
-/**
  * RX callback triggered on radio packet reception.
  * Currently unused beyond debug logging.
  */
@@ -237,4 +187,44 @@ void radio_scanner_process_scanning(RadioScannerApp* app) {
     FURI_LOG_D(TAG, "Asynchronous RX restarted");
     FURI_LOG_D(TAG, "Exit radio_scanner_process_scanning");
 #endif
+}
+
+/**
+ * Retrieves the current frequency value as a string.
+ */
+void radio_scanner_get_frequency_str(RadioScannerApp* app, FuriString* frequency_str) {
+    furi_assert(app);
+    if(frequency_str != NULL) {
+        furi_string_printf(frequency_str, "%.2f", (double)app->frequency / 1000000);
+    }
+}
+
+/**
+ * Retrieves the current RSSI value as a string.
+ */
+void radio_scanner_get_rssi_str(RadioScannerApp* app, FuriString* rssi_str) {
+    furi_assert(app);
+    if(rssi_str != NULL) {
+        furi_string_printf(rssi_str, "%.2f", (double)app->rssi);
+    }
+}
+
+/**
+ * Retrieves the current sensitivity value as a string.
+ */
+void radio_scanner_get_sensitivity_str(RadioScannerApp* app, FuriString* sensitivity_str) {
+    furi_assert(app);
+    if(sensitivity_str != NULL) {
+        furi_string_printf(sensitivity_str, "%.2f", (double)app->sensitivity);
+    }
+}
+
+/**
+ * Retrieves the scanning status as a string.
+ */
+void radio_scanner_get_scanning_str(RadioScannerApp* app, FuriString* scanning_str) {
+    furi_assert(app);
+    if(scanning_str != NULL) {
+        furi_string_printf(scanning_str, app->scanning ? "Scanning..." : "Locked");
+    }
 }

@@ -8,6 +8,36 @@
 #include <subghz/devices/devices.h>
 
 /**
+ * Custom event callback for the radio scanner app.
+ * Passes custom events to the scene manager for handling.
+ */
+static bool radio_scanner_app_custom_event_callback(void* context, uint32_t event) {
+    furi_assert(context);
+    RadioScannerApp* app = context;
+    return scene_manager_handle_custom_event(app->scene_manager, event);
+}
+
+/**
+ * Back event callback for the radio scanner app.
+ * Processes back navigation events via the scene manager.
+ */
+static bool radio_scanner_app_back_event_callback(void* context) {
+    furi_assert(context);
+    RadioScannerApp* app = context;
+    return scene_manager_handle_back_event(app->scene_manager);
+}
+
+/**
+ * Tick event callback for the radio scanner app.
+ * Invokes the scene manager to handle periodic tick events.
+ */
+static void radio_scanner_app_tick_event_callback(void* context) {
+    furi_assert(context);
+    RadioScannerApp* app = context;
+    scene_manager_handle_tick_event(app->scene_manager);
+}
+
+/**
  * Allocates and initializes a new instance of the RadioScannerApp.
  * Sets up GUI components, state variables, and input handlers.
  */
@@ -21,11 +51,27 @@ RadioScannerApp* radio_scanner_app_alloc() {
         return NULL;
     }
 
-    app->view_port = view_port_alloc();
+    // GUI
+    app->gui = furi_record_open(RECORD_GUI);
 
-    app->event_queue = furi_message_queue_alloc(8, sizeof(InputEvent));
+    // SceneManager
+    app->scene_manager = scene_manager_alloc(&radio_scanner_scene_handlers, app);
 
-    app->running = true;
+    // ViewDispatcher
+    app->view_dispatcher = view_dispatcher_alloc();
+
+    view_dispatcher_set_event_callback_context(app->view_dispatcher, app);
+    view_dispatcher_set_custom_event_callback(app->view_dispatcher, radio_scanner_app_custom_event_callback);
+    view_dispatcher_set_navigation_event_callback(app->view_dispatcher, radio_scanner_app_back_event_callback);
+    view_dispatcher_set_tick_event_callback(app->view_dispatcher, radio_scanner_app_tick_event_callback, 100);
+
+    view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
+
+    // Scanner
+    app->scanner = scanner_view_alloc();
+    view_dispatcher_add_view(app->view_dispatcher, RadioScannerViewScanner, scanner_view_get_view(app->scanner));
+
+    // Init app state
     app->frequency = RADIO_SCANNER_DEFAULT_FREQ;
     app->rssi = RADIO_SCANNER_DEFAULT_RSSI;
     app->sensitivity = RADIO_SCANNER_DEFAULT_SENSITIVITY;
@@ -34,12 +80,7 @@ RadioScannerApp* radio_scanner_app_alloc() {
     app->speaker_acquired = false;
     app->radio_device = NULL;
 
-    view_port_draw_callback_set(app->view_port, radio_scanner_draw_callback, app);
-    view_port_input_callback_set(app->view_port, radio_scanner_input_callback, app->event_queue);
-
-    app->gui = furi_record_open(RECORD_GUI);
-
-    gui_add_view_port(app->gui, app->view_port, GuiLayerFullscreen);
+    scene_manager_next_scene(app->scene_manager, RadioScannerSceneScanner);
 
 #ifdef FURI_DEBUG
     FURI_LOG_D(TAG, "Exit radio_scanner_app_alloc");
@@ -80,10 +121,16 @@ void radio_scanner_app_free(RadioScannerApp* app) {
     }
 
     subghz_devices_deinit();
-    gui_remove_view_port(app->gui, app->view_port);
-    view_port_free(app->view_port);
 
-    furi_message_queue_free(app->event_queue);
+    // Scanner
+    view_dispatcher_remove_view(app->view_dispatcher, RadioScannerViewScanner);
+    scanner_view_free(app->scanner);
+
+    // ViewDispatcher
+    view_dispatcher_free(app->view_dispatcher);
+
+    // SceneManager
+    scene_manager_free(app->scene_manager);
 
     furi_record_close(RECORD_GUI);
 
@@ -116,63 +163,7 @@ int32_t radio_scanner_app(void* p) {
     FURI_LOG_D(TAG, "SubGHz initialized successfully");
 #endif
 
-    InputEvent event;
-    while(app->running) {
-#ifdef FURI_DEBUG
-        FURI_LOG_D(TAG, "Main loop iteration");
-#endif
-        if(app->scanning) {
-#ifdef FURI_DEBUG
-            FURI_LOG_D(TAG, "Scanning is active");
-#endif
-            radio_scanner_process_scanning(app);
-        } else {
-#ifdef FURI_DEBUG
-            FURI_LOG_D(TAG, "Scanning is inactive, updating RSSI");
-#endif
-            radio_scanner_update_rssi(app);
-        }
-
-        if(furi_message_queue_get(app->event_queue, &event, 10) == FuriStatusOk) {
-#ifdef FURI_DEBUG
-            FURI_LOG_D(TAG, "Input event received: type=%d, key=%d", event.type, event.key);
-#endif
-            if(event.type == InputTypeShort) {
-                switch(event.key) {
-                    case InputKeyOk:
-                        app->scanning = !app->scanning;
-                        FURI_LOG_I(TAG, "Toggled scanning: %d", app->scanning);
-                        break;
-                    case InputKeyUp:
-                        app->sensitivity += 1.0f;
-                        FURI_LOG_I(TAG, "Increased sensitivity: %f", (double)app->sensitivity);
-                        break;
-                    case InputKeyDown:
-                        app->sensitivity -= 1.0f;
-                        FURI_LOG_I(TAG, "Decreased sensitivity: %f", (double)app->sensitivity);
-                        break;
-                    case InputKeyLeft:
-                        app->scan_direction = ScanDirectionDown;
-                        FURI_LOG_I(TAG, "Scan direction set to down");
-                        break;
-                    case InputKeyRight:
-                        app->scan_direction = ScanDirectionUp;
-                        FURI_LOG_I(TAG, "Scan direction set to up");
-                        break;
-                    case InputKeyBack:
-                        app->running = false;
-                        FURI_LOG_I(TAG, "Exiting app");
-                        break;
-                    default:
-                        FURI_LOG_I(TAG, "Unknown input");
-                        break;
-                }
-            }
-        }
-
-        view_port_update(app->view_port);
-        furi_delay_ms(10);
-    }
+    view_dispatcher_run(app->view_dispatcher);
 
     radio_scanner_app_free(app);
 #ifdef FURI_DEBUG
