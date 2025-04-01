@@ -67,6 +67,10 @@ RadioScannerApp* radio_scanner_app_alloc() {
 
     view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
 
+    // Config
+    app->config = variable_item_list_alloc();
+    view_dispatcher_add_view(app->view_dispatcher, RadioScannerViewConfig, variable_item_list_get_view(app->config));
+
     // Scanner
     app->scanner = scanner_view_alloc();
     view_dispatcher_add_view(app->view_dispatcher, RadioScannerViewScanner, scanner_view_get_view(app->scanner));
@@ -121,6 +125,10 @@ void radio_scanner_app_free(RadioScannerApp* app) {
     }
 
     subghz_devices_deinit();
+
+    // Config
+    view_dispatcher_remove_view(app->view_dispatcher, RadioScannerViewConfig);
+    variable_item_list_free(app->config);
 
     // Scanner
     view_dispatcher_remove_view(app->view_dispatcher, RadioScannerViewScanner);

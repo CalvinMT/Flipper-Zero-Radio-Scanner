@@ -3,6 +3,7 @@
 #include "scenes/radio_scanner_scene.h"
 #include "views/scanner.h"
 
+#include <gui/elements.h>
 #include <gui/gui.h>
 #include <gui/modules/variable_item_list.h>
 #include <gui/modules/widget.h>
@@ -26,6 +27,7 @@
  * Enumeration of view types used in the radio scanner app.
  */
 typedef enum {
+    RadioScannerViewConfig,
     RadioScannerViewScanner,
 } RadioScannerView;
 
@@ -41,6 +43,7 @@ typedef enum {
  * Main structure for the radio scanner app.
  */
 typedef struct {
+    VariableItemList* config;
     Gui* gui;
     uint32_t frequency;
     float rssi;

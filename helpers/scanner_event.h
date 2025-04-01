@@ -11,4 +11,6 @@ typedef enum {
     // Sensitivity
     ScannerEventDecreaseSensitivity,
     ScannerEventIncreaseSensitivity,
+    // Views
+    ScannerEventViewConfig,
 } ScannerEvent;

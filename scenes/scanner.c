@@ -98,6 +98,11 @@ bool scanner_scene_on_event(void* context, SceneManagerEvent event) {
                 FURI_LOG_I(TAG, "Increased sensitivity: %f", (double)app->sensitivity);
                 consumed = true;
                 break;
+            // Views
+            case ScannerEventViewConfig:
+                scene_manager_next_scene(app->scene_manager, RadioScannerSceneConfig);
+                consumed = true;
+                break;
             default:
                 FURI_LOG_I(TAG, "Unknown event");
                 break;

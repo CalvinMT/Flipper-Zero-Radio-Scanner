@@ -50,6 +50,9 @@ void scanner_view_draw(Canvas* canvas, ScannerModel* model) {
 #endif    
     canvas_clear(canvas);
     canvas_set_font(canvas, FontPrimary);
+
+    elements_button_left(canvas, "Config");
+
     canvas_draw_str_aligned(canvas, 64, 2, AlignCenter, AlignTop, "Radio Scanner");
 
     canvas_set_font(canvas, FontSecondary);
@@ -98,7 +101,7 @@ bool scanner_view_input(InputEvent* event, void* context) {
                 consumed = true;
                 break;
             case InputKeyLeft:
-                scanner->callback(ScannerEventScanDirectionDown, scanner->context);
+                scanner->callback(ScannerEventViewConfig, scanner->context);
                 consumed = true;
                 break;
             case InputKeyRight:
