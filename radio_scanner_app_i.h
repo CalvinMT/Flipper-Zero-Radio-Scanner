@@ -1,5 +1,6 @@
 #pragma once
 
+#include "helpers/radio_scanner_states.h"
 #include "scenes/radio_scanner_scene.h"
 #include "views/scanner.h"
 
@@ -53,6 +54,7 @@ typedef struct {
     ScanDirection scan_direction;
     Scanner* scanner;
     const SubGhzDevice* radio_device;
+    SoundState sound_state;
     bool speaker_acquired;
     ViewDispatcher* view_dispatcher;
 } RadioScannerApp;

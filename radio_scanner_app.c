@@ -81,6 +81,7 @@ RadioScannerApp* radio_scanner_app_alloc() {
     app->sensitivity = RADIO_SCANNER_DEFAULT_SENSITIVITY;
     app->scanning = true;
     app->scan_direction = ScanDirectionUp;
+    app->sound_state = SoundStateOFF;
     app->speaker_acquired = false;
     app->radio_device = NULL;
 
