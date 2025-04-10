@@ -92,14 +92,6 @@ bool scanner_view_input(InputEvent* event, void* context) {
                 scanner->callback(ScannerEventToggleScanning, scanner->context);
                 consumed = true;
                 break;
-            case InputKeyUp:
-                scanner->callback(ScannerEventIncreaseSensitivity, scanner->context);
-                consumed = true;
-                break;
-            case InputKeyDown:
-                scanner->callback(ScannerEventDecreaseSensitivity, scanner->context);
-                consumed = true;
-                break;
             case InputKeyLeft:
                 scanner->callback(ScannerEventViewConfig, scanner->context);
                 consumed = true;

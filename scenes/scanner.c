@@ -87,17 +87,6 @@ bool scanner_scene_on_event(void* context, SceneManagerEvent event) {
                 FURI_LOG_I(TAG, "Toggled scanning: %d", app->scanning);
                 consumed = true;
                 break;
-            // Sensitivity
-            case ScannerEventDecreaseSensitivity:
-                app->sensitivity -= 1.0f;
-                FURI_LOG_I(TAG, "Decreased sensitivity: %f", (double)app->sensitivity);
-                consumed = true;
-                break;
-            case ScannerEventIncreaseSensitivity:
-                app->sensitivity += 1.0f;
-                FURI_LOG_I(TAG, "Increased sensitivity: %f", (double)app->sensitivity);
-                consumed = true;
-                break;
             // Views
             case ScannerEventViewConfig:
                 scene_manager_next_scene(app->scene_manager, RadioScannerSceneConfig);

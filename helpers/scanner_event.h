@@ -8,9 +8,6 @@ typedef enum {
     ScannerEventScanDirectionDown,
     ScannerEventScanDirectionUp,
     ScannerEventToggleScanning,
-    // Sensitivity
-    ScannerEventDecreaseSensitivity,
-    ScannerEventIncreaseSensitivity,
     // Views
     ScannerEventViewConfig,
 } ScannerEvent;
