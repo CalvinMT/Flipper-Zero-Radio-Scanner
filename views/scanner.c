@@ -96,8 +96,12 @@ bool scanner_view_input(InputEvent* event, void* context) {
                 scanner->callback(ScannerEventViewConfig, scanner->context);
                 consumed = true;
                 break;
-            case InputKeyRight:
+            case InputKeyUp:
                 scanner->callback(ScannerEventScanDirectionUp, scanner->context);
+                consumed = true;
+                break;
+            case InputKeyDown:
+                scanner->callback(ScannerEventScanDirectionDown, scanner->context);
                 consumed = true;
                 break;
             default:
