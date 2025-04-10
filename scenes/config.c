@@ -5,6 +5,7 @@
  */
 enum ConfigIndex {
     ConfigIndexSound,
+    ConfigIndexSensitivity,
 };
 
 // Text labels for the sound state values.
@@ -60,6 +61,44 @@ uint8_t config_scene_sound_value_index(const uint32_t value, const uint32_t valu
 }
 
 /**
+ * Helper function to update the sensitivity display text.
+ */
+static void config_scene_set_sensitivity_display_text(VariableItem* item, float sensitivity) {
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%.1f", (double)sensitivity);
+    variable_item_set_current_value_text(item, buf);
+}
+
+/**
+ * Helper function to compute the configuration index based on the current sensitivity value.
+ *
+ * Sensitivity is a float where 0.0 corresponds to index 0 and -127.0 corresponds to index 127.
+ * This function clamps the value to the allowed range and returns the proper index.
+ */
+static uint8_t config_scene_sensitivity_value_index(float sensitivity) {
+    if(sensitivity > 0.0f) {
+        sensitivity = 0.0f;
+    } else if(sensitivity < -127.0f) {
+        sensitivity = -127.0f;
+    }
+    return (uint8_t)(sensitivity + 127.0f);
+}
+
+/**
+ * Callback to update the sensitivity value when changed in the config UI.
+ */
+static void config_scene_set_sensitivity(VariableItem* item) {
+    RadioScannerApp* app = variable_item_get_context(item);
+    uint8_t index = variable_item_get_current_value_index(item);
+
+    // Calculate sensitivity: index 0 = -127.0, index 1 = -126.0, ..., index 127 = 0.0
+    float sensitivity = -127.0f + (float)index;
+    app->sensitivity = sensitivity;
+
+    config_scene_set_sensitivity_display_text(item, sensitivity);
+}
+
+/**
  * Handler called when entering the config scene.
  * Sets the config view callback and switches the view to the config view.
  */
@@ -79,6 +118,18 @@ void config_scene_on_enter(void* context) {
     value_index = config_scene_sound_value_index(app->sound_state, sound_state_value, SoundStateNum, app);
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, sound_state_text[value_index]);
+
+    // Sensitivity
+    item = variable_item_list_add(
+        app->config,
+        "Sensitivity:",
+        128,
+        config_scene_set_sensitivity,
+        app
+    );
+    uint8_t sensitivity_index = config_scene_sensitivity_value_index(app->sensitivity);
+    variable_item_set_current_value_index(item, sensitivity_index);
+    config_scene_set_sensitivity_display_text(item, app->sensitivity);
 
     view_dispatcher_switch_to_view(app->view_dispatcher, RadioScannerViewConfig);
 }
