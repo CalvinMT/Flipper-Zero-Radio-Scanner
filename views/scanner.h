@@ -31,6 +31,7 @@ typedef struct {
     FuriString* frequency_str;
     FuriString* rssi_str;
     FuriString* sensitivity_str;
+    FuriString* scan_direction_str;
     FuriString* scanning_str;
 } ScannerModel;
 
@@ -38,7 +39,7 @@ void scanner_view_set_callback(Scanner* scanner, ScannerCallback callback, void*
 
 View* scanner_view_get_view(Scanner* scanner);
 
-void scanner_view_update(Scanner* scanner, const char* frequency_str, const char* rssi_str, const char* sensitivity_str, const char* scanning_str);
+void scanner_view_update(Scanner* scanner, const char* frequency_str, const char* rssi_str, const char* sensitivity_str, const char* scan_direction_str, const char* scanning_str);
 
 Scanner* scanner_view_alloc();
 void scanner_view_free(Scanner* scanner);

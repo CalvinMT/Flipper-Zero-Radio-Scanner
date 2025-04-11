@@ -21,16 +21,19 @@ static void scanner_scene_update(void* context) {
     FuriString* frequency_str;
     FuriString* rssi_str;
     FuriString* sensitivity_str;
+    FuriString* scan_direction_str;
     FuriString* scanning_str;
 
     frequency_str = furi_string_alloc();
     rssi_str = furi_string_alloc();
     sensitivity_str = furi_string_alloc();
+    scan_direction_str = furi_string_alloc();
     scanning_str = furi_string_alloc();
 
     radio_scanner_get_frequency_str(app, frequency_str);
     radio_scanner_get_rssi_str(app, rssi_str);
     radio_scanner_get_sensitivity_str(app, sensitivity_str);
+    radio_scanner_get_scan_direction_str(app, scan_direction_str);
     radio_scanner_get_scanning_str(app, scanning_str);
 
     scanner_view_update(
@@ -38,12 +41,14 @@ static void scanner_scene_update(void* context) {
         furi_string_get_cstr(frequency_str),
         furi_string_get_cstr(rssi_str),
         furi_string_get_cstr(sensitivity_str),
+        furi_string_get_cstr(scan_direction_str),
         furi_string_get_cstr(scanning_str)
     );
 
     furi_string_free(frequency_str);
     furi_string_free(rssi_str);
     furi_string_free(sensitivity_str);
+    furi_string_free(scan_direction_str);
     furi_string_free(scanning_str);
 }
 

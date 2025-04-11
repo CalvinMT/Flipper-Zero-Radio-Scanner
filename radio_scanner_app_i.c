@@ -250,6 +250,16 @@ void radio_scanner_get_sensitivity_str(RadioScannerApp* app, FuriString* sensiti
 }
 
 /**
+ * Retrieves the scan direction as a string.
+ */
+void radio_scanner_get_scan_direction_str(RadioScannerApp* app, FuriString* scan_direction_str) {
+    furi_assert(app);
+    if(scan_direction_str != NULL) {
+        furi_string_printf(scan_direction_str, app->scan_direction == ScanDirectionUp ? "+" : "-");
+    }
+}
+
+/**
  * Retrieves the scanning status as a string.
  */
 void radio_scanner_get_scanning_str(RadioScannerApp* app, FuriString* scanning_str) {

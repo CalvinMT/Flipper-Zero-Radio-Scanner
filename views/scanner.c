@@ -24,7 +24,7 @@ View* scanner_view_get_view(Scanner* scanner) {
 /**
  * Updates the scanner view with new frequency, RSSI, sensitivity, and scanning status strings.
  */
-void scanner_view_update(Scanner* scanner, const char* frequency_str, const char* rssi_str, const char* sensitivity_str, const char* scanning_str) {
+void scanner_view_update(Scanner* scanner, const char* frequency_str, const char* rssi_str, const char* sensitivity_str, const char* scan_direction_str, const char* scanning_str) {
     furi_assert(scanner);
     with_view_model(
         scanner->view,
@@ -33,6 +33,7 @@ void scanner_view_update(Scanner* scanner, const char* frequency_str, const char
             furi_string_set_str(model->frequency_str, frequency_str);
             furi_string_set_str(model->rssi_str, rssi_str);
             furi_string_set_str(model->sensitivity_str, sensitivity_str);
+            furi_string_set_str(model->scan_direction_str, scan_direction_str);
             furi_string_set_str(model->scanning_str, scanning_str);
         },
         true);
@@ -150,6 +151,7 @@ Scanner* scanner_view_alloc() {
             model->frequency_str = furi_string_alloc();
             model->rssi_str = furi_string_alloc();
             model->sensitivity_str = furi_string_alloc();
+            model->scan_direction_str = furi_string_alloc();
             model->scanning_str = furi_string_alloc();
         },
         true
@@ -171,6 +173,7 @@ void scanner_view_free(Scanner* scanner) {
             furi_string_free(model->frequency_str);
             furi_string_free(model->rssi_str);
             furi_string_free(model->sensitivity_str);
+            furi_string_free(model->scan_direction_str);
             furi_string_free(model->scanning_str);
         },
         false);

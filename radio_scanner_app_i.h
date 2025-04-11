@@ -68,4 +68,5 @@ void radio_scanner_update_squelch(RadioScannerApp* app);
 void radio_scanner_get_frequency_str(RadioScannerApp* app, FuriString* frequency_str);
 void radio_scanner_get_rssi_str(RadioScannerApp* app, FuriString* rssi_str);
 void radio_scanner_get_sensitivity_str(RadioScannerApp* app, FuriString* sensitivity_str);
+void radio_scanner_get_scan_direction_str(RadioScannerApp* app, FuriString* scan_direction_str);
 void radio_scanner_get_scanning_str(RadioScannerApp* app, FuriString* scanning_str);
