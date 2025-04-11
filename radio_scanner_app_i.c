@@ -235,7 +235,7 @@ void radio_scanner_get_frequency_str(RadioScannerApp* app, FuriString* frequency
 void radio_scanner_get_rssi_str(RadioScannerApp* app, FuriString* rssi_str) {
     furi_assert(app);
     if(rssi_str != NULL) {
-        furi_string_printf(rssi_str, "%.2f", (double)app->rssi);
+        furi_string_printf(rssi_str, "%.1f", (double)app->rssi);
     }
 }
 
@@ -245,7 +245,7 @@ void radio_scanner_get_rssi_str(RadioScannerApp* app, FuriString* rssi_str) {
 void radio_scanner_get_sensitivity_str(RadioScannerApp* app, FuriString* sensitivity_str) {
     furi_assert(app);
     if(sensitivity_str != NULL) {
-        furi_string_printf(sensitivity_str, "%.2f", (double)app->sensitivity);
+        furi_string_printf(sensitivity_str, "%.1f", (double)app->sensitivity);
     }
 }
 

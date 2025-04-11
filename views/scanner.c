@@ -58,18 +58,20 @@ void scanner_view_draw(Canvas* canvas, ScannerModel* model) {
 
     canvas_set_font(canvas, FontSecondary);
     char freq_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(freq_str, RADIO_SCANNER_BUFFER_SZ, "Freq: %s MHz", furi_string_get_cstr(model->frequency_str));
-    canvas_draw_str_aligned(canvas, 64, 18, AlignCenter, AlignTop, freq_str);
+    snprintf(freq_str, RADIO_SCANNER_BUFFER_SZ, "Freq. (%s):", furi_string_get_cstr(model->scan_direction_str));
+    canvas_draw_str_aligned(canvas, 8, 18, AlignLeft, AlignTop, freq_str);
+    char freq_value_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
+    snprintf(freq_value_str, RADIO_SCANNER_BUFFER_SZ, "%s MHz", furi_string_get_cstr(model->frequency_str));
+    canvas_draw_str_aligned(canvas, 120, 18, AlignRight, AlignTop, freq_value_str);
 
     char rssi_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(rssi_str, RADIO_SCANNER_BUFFER_SZ, "RSSI: %s", furi_string_get_cstr(model->rssi_str));
-    canvas_draw_str_aligned(canvas, 64, 30, AlignCenter, AlignTop, rssi_str);
+    snprintf(rssi_str, RADIO_SCANNER_BUFFER_SZ, "RSSI (%s):", furi_string_get_cstr(model->sensitivity_str));
+    canvas_draw_str_aligned(canvas, 8, 30, AlignLeft, AlignTop, rssi_str);
+    char rssi_value_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
+    snprintf(rssi_value_str, RADIO_SCANNER_BUFFER_SZ, "%s dBm", furi_string_get_cstr(model->rssi_str));
+    canvas_draw_str_aligned(canvas, 120, 30, AlignRight, AlignTop, rssi_value_str);
 
-    char sensitivity_str[RADIO_SCANNER_BUFFER_SZ + 1] = {0};
-    snprintf(sensitivity_str, RADIO_SCANNER_BUFFER_SZ, "Sens: %s", furi_string_get_cstr(model->sensitivity_str));
-    canvas_draw_str_aligned(canvas, 64, 42, AlignCenter, AlignTop, sensitivity_str);
-
-    canvas_draw_str_aligned(canvas, 64, 54, AlignCenter, AlignTop, furi_string_get_cstr(model->scanning_str));
+    canvas_draw_str_aligned(canvas, 64, 42, AlignCenter, AlignTop, furi_string_get_cstr(model->scanning_str));
 #ifdef FURI_DEBUG
     FURI_LOG_D(TAG, "Exit scanner_view_draw");
 #endif
