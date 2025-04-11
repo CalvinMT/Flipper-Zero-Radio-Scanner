@@ -109,6 +109,13 @@ bool scanner_scene_on_event(void* context, SceneManagerEvent event) {
             radio_scanner_update_rssi(app);
         }
 
+        if(app->sound_state == SoundStateSquelch) {
+            #ifdef FURI_DEBUG
+                    FURI_LOG_D(TAG, "Squelch is active, updating sound output");
+            #endif
+            radio_scanner_update_squelch(app);
+        }
+
         scanner_scene_update(app);
 
         consumed = true;

@@ -11,12 +11,14 @@ enum ConfigIndex {
 // Text labels for the sound state values.
 const char* const sound_state_text[SoundStateNum] = {
     "OFF",
+    "SQLCH",
     "ON",
 };
 
 // Corresponding enum/int values for sound states.
 const uint32_t sound_state_value[SoundStateNum] = {
     SoundStateOFF,
+    SoundStateSquelch,
     SoundStateON,
 };
 
@@ -50,14 +52,15 @@ static void config_scene_set_sound_state(VariableItem* item) {
  */
 uint8_t config_scene_sound_value_index(const uint32_t value, const uint32_t values[], uint8_t values_count, void* context) {
     furi_assert(context);
-    UNUSED(values_count);
     UNUSED(context);
 
-    if(value == values[0]) {
-        return 0;
-    } else {
-        return 1;
+    for(uint8_t i = 0; i < values_count; i++){
+        if(values[i] == value) {
+            return i;
+        }
     }
+
+    return 0;
 }
 
 /**

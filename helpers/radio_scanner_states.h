@@ -2,5 +2,6 @@
 typedef enum {
     SoundStateOFF,
     SoundStateON,
+    SoundStateSquelch,
     SoundStateNum
 } SoundState;

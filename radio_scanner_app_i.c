@@ -194,6 +194,32 @@ void radio_scanner_process_scanning(RadioScannerApp* app) {
 }
 
 /**
+ * Updates the squelch state by checking the current RSSI against the configured sensitivity threshold.
+ */
+void radio_scanner_update_squelch(RadioScannerApp* app) {
+    if(app->speaker_acquired && app->sound_state == SoundStateSquelch) {
+        bool signal_detected = (app->rssi > app->sensitivity);
+
+        if(signal_detected) {
+            subghz_devices_stop_async_rx(app->radio_device);
+            subghz_devices_set_async_mirror_pin(app->radio_device, &gpio_speaker);
+            subghz_devices_start_async_rx(app->radio_device, radio_scanner_rx_callback, app);
+#ifdef FURI_DEBUG
+            FURI_LOG_D(TAG, "Squelch activated: enabling audio output");
+#endif
+        }
+        else {
+            subghz_devices_stop_async_rx(app->radio_device);
+            subghz_devices_set_async_mirror_pin(app->radio_device, NULL);
+            subghz_devices_start_async_rx(app->radio_device, radio_scanner_rx_callback, app);
+#ifdef FURI_DEBUG
+            FURI_LOG_D(TAG, "Squelch deactivated: disabling audio output");
+#endif
+        }
+    }
+}
+
+/**
  * Retrieves the current frequency value as a string.
  */
 void radio_scanner_get_frequency_str(RadioScannerApp* app, FuriString* frequency_str) {

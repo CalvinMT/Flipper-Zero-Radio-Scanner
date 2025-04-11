@@ -63,6 +63,7 @@ void radio_scanner_rx_callback(const void* data, size_t size, void* context);
 void radio_scanner_update_rssi(RadioScannerApp* app);
 bool radio_scanner_init_subghz(RadioScannerApp* app);
 void radio_scanner_process_scanning(RadioScannerApp* app);
+void radio_scanner_update_squelch(RadioScannerApp* app);
 
 void radio_scanner_get_frequency_str(RadioScannerApp* app, FuriString* frequency_str);
 void radio_scanner_get_rssi_str(RadioScannerApp* app, FuriString* rssi_str);
